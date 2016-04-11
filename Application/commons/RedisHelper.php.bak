@@ -1,0 +1,50 @@
+﻿<?php
+
+class RedisHelper {
+    
+    const HOST = '10.163.241.131';
+    const PORT = 6379;
+    const AUTH = 'qchdyfbredis'; //replace with a string to use Redis authentication
+    protected  $logger;
+    public function setLogger($ID)
+    {
+        $this->logger = $ID;
+
+        return $this;
+    }
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    function __construct() {
+        $this->setUp();
+    }
+    /**
+     * @var Redis
+     */
+    public $redis;
+
+    public function setUp()
+    {
+        $this->redis = $this->newInstance();
+    }
+
+    private function newInstance() {
+        $r = new Redis();
+        $r->connect(self::HOST, self::PORT);
+
+        if(self::AUTH) {
+            $r->auth(self::AUTH);
+        }
+        return $r;
+    }
+    public function tearDown()
+    {
+        if($this->redis) {
+            $this->redis->close();
+        }
+        unset($this->redis);
+    }
+
+}
